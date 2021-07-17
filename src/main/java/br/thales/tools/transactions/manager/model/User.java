@@ -27,7 +27,7 @@ public class User {
     private String type; // TODO: Change to enum or class
     @NonNull
     private String status; // TODO: Change to enum or class
-    @NonNull
+    //NonNull
     private int version;
     @NonNull
     private Date date;
