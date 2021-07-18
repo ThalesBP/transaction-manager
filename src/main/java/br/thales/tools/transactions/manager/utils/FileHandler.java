@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static br.thales.tools.transactions.manager.utils.Constants.RESOURCE_PATH;
+import static br.thales.tools.transactions.manager.utils.Constants.Paths.RESOURCE_PATH;
 
 public class FileHandler {
 
