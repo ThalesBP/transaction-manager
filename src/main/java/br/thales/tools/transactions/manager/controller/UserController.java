@@ -6,15 +6,13 @@ import br.thales.tools.transactions.manager.model.User;
 import br.thales.tools.transactions.manager.model.User.Type;
 import br.thales.tools.transactions.manager.utils.Constants.Status;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
-import static br.thales.tools.transactions.manager.utils.Constants.Strings.SPACE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @RestController
@@ -24,9 +22,19 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
-    @GetMapping(value = "getAllCustomers")
+    @GetMapping(value = "getAllUser")
     public List<User> listAll(){
         return userRepository.findAll();
+    }
+
+    @PostMapping(value = "getUser")
+    public User getUser(@RequestBody Long id){
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            return user.get();
+        } else {
+            throw new HttpClientErrorException(BAD_REQUEST, "User not found");
+        }
     }
 
     @PostMapping(value = "addCustomer")

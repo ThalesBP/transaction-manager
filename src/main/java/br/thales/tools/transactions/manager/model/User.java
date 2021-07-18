@@ -27,6 +27,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     protected Type type;
     @NonNull
+    @Enumerated(EnumType.STRING)
     protected Status status;
     //NonNull
     protected int version;
