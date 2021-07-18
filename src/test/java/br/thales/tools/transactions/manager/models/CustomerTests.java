@@ -4,7 +4,6 @@ import br.thales.test.TestBase;
 
 import br.thales.tools.transactions.manager.error.ModelException;
 import br.thales.tools.transactions.manager.model.Customer;
-import br.thales.tools.transactions.manager.model.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.util.Assert;

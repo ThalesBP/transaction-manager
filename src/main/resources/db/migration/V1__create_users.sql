@@ -1,8 +1,6 @@
 CREATE TABLE IF NOT EXISTS `USER` (
-	ID INT auto_increment NOT NULL,
-	FIRST_NAME varchar(100) NOT NULL,
-	MIDDLE_NAME varchar(100) NULL,
-	LAST_NAME varchar(100) NOT NULL,
+	ID BIGINT auto_increment NOT NULL,
+	NAME varchar(100) NOT NULL,
 	`TYPE` varchar(100) NOT NULL,
 	STATUS varchar(100) NOT NULL,
 	VERSION INT NOT NULL,
