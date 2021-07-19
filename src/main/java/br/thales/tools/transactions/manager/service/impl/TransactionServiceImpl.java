@@ -2,7 +2,6 @@ package br.thales.tools.transactions.manager.service.impl;
 
 import br.thales.tools.transactions.manager.database.AccountRepository;
 import br.thales.tools.transactions.manager.database.TransactionRepository;
-import br.thales.tools.transactions.manager.database.UserRepository;
 import br.thales.tools.transactions.manager.error.ServiceException;
 import br.thales.tools.transactions.manager.model.Account;
 import br.thales.tools.transactions.manager.model.Transaction;
@@ -26,9 +25,6 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Autowired
     AccountRepository accountRepository;
-
-    @Autowired
-    UserRepository userRepository;
 
     @Override
     public Transaction transfer(Long fromAccountId, Long toAccountId, Float value)  throws ServiceException {
