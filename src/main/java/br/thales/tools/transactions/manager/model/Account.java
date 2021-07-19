@@ -25,8 +25,11 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private Type type;
     //NonNull
+    private float balance;
+    //NonNull
     private int version;
     @NonNull
+    @Enumerated(EnumType.STRING)
     private Status status;
     @NonNull
     private Date date;

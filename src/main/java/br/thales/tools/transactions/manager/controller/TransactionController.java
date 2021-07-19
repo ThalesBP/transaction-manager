@@ -1,11 +1,11 @@
 package br.thales.tools.transactions.manager.controller;
 
+import br.thales.tools.transactions.manager.database.AccountRepository;
 import br.thales.tools.transactions.manager.database.TransacionRepository;
-import br.thales.tools.transactions.manager.database.UserRepository;
 import br.thales.tools.transactions.manager.external.CashMessage;
 import br.thales.tools.transactions.manager.external.TransferMessage;
+import br.thales.tools.transactions.manager.model.Account;
 import br.thales.tools.transactions.manager.model.Transaction;
-import br.thales.tools.transactions.manager.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -15,10 +15,8 @@ import java.util.Date;
 import java.util.Optional;
 
 import static br.thales.tools.transactions.manager.model.Transaction.Type.*;
-import static br.thales.tools.transactions.manager.utils.Constants.BANK;
 import static br.thales.tools.transactions.manager.utils.Constants.BANK_ID;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
 @RequestMapping("transaction")
@@ -26,14 +24,14 @@ public class TransactionController {
     @Autowired
     TransacionRepository transacionRepository;
     @Autowired
-    UserRepository userRepository;
+    AccountRepository accountRepository;
 
     @PostMapping(value = "transfer")
     public Transaction postTransfer(@RequestBody TransferMessage transferMessage){
-        Optional<User> userFrom = userRepository.findById(transferMessage.getFromId());
-        checkIfExisits(userFrom, "User From not found");
-        Optional<User> userTo = userRepository.findById(transferMessage.getToId());
-        checkIfExisits(userTo, "User To not found");
+        Optional<Account> accountFromOptional = accountRepository.findById(transferMessage.getFromId());
+        Account accountFrom = checkIfExists(accountFromOptional);
+        Optional<Account> accountToOptional = accountRepository.findById(transferMessage.getToId());
+        Account accountTo = checkIfExists(accountToOptional);
 
         Transaction transaction = new Transaction();
         transaction.setFromAccountId(transferMessage.getFromId());
@@ -42,13 +40,18 @@ public class TransactionController {
         transaction.setType(TRANSFER);
         transaction.setDate(new Date());
         transacionRepository.save(transaction);
+
+        accountFrom.setBalance(accountFrom.getBalance() - transferMessage.getValue());
+        accountTo.setBalance(accountTo.getBalance() + transferMessage.getValue());
+        accountRepository.save(accountFrom);
+        accountRepository.save(accountTo);
         return transaction;
     }
 
     @PostMapping(value = "draw")
     public Transaction postDraw(@RequestBody CashMessage cashMessage){
-        Optional<User> userFrom = userRepository.findById(cashMessage.getId());
-        checkIfExisits(userFrom, "User not found");
+        Optional<Account> accountFromOptional = accountRepository.findById(cashMessage.getId());
+        Account accountFrom = checkIfExists(accountFromOptional);
 
         Transaction transaction = new Transaction();
         transaction.setFromAccountId(cashMessage.getId());
@@ -56,13 +59,16 @@ public class TransactionController {
         transaction.setType(DRAW);
         transaction.setDate(new Date());
         transacionRepository.save(transaction);
+
+        accountFrom.setBalance(accountFrom.getBalance() - cashMessage.getValue());
+        accountRepository.save(accountFrom);
         return transaction;
     }
 
     @PostMapping(value = "deposit")
     public Transaction postDeposit(@RequestBody CashMessage cashMessage){
-        Optional<User> userTo = userRepository.findById(cashMessage.getId());
-        checkIfExisits(userTo, "User not found");
+        Optional<Account> accountToOptional = accountRepository.findById(cashMessage.getId());
+        Account accountTo = checkIfExists(accountToOptional);
 
         Transaction transaction = new Transaction();
         transaction.setToAccountId(cashMessage.getId());
@@ -70,15 +76,18 @@ public class TransactionController {
         transaction.setType(DEPOSIT);
         transaction.setDate(new Date());
         transacionRepository.save(transaction);
+
+        accountTo.setBalance(accountTo.getBalance() + cashMessage.getValue());
+        accountRepository.save(accountTo);
         return transaction;
     }
 
     @PostMapping(value = "income")
     public Transaction postIncome(@RequestBody CashMessage cashMessage){
-        Optional<User> userFrom = userRepository.findById(BANK_ID);
-        checkBankUser(userFrom);
-        Optional<User> userTo = userRepository.findById(cashMessage.getId());
-        checkIfExisits(userTo, "User From not found");
+        Optional<Account> accountFromOptional = accountRepository.findById(BANK_ID);
+        Account accountFrom = checkIfExists(accountFromOptional);
+        Optional<Account> accountToOptional = accountRepository.findById(cashMessage.getId());
+        Account accountTo = checkIfExists(accountToOptional);
 
         Transaction transaction = new Transaction();
         transaction.setFromAccountId(cashMessage.getId());
@@ -86,15 +95,20 @@ public class TransactionController {
         transaction.setType(INCOME);
         transaction.setDate(new Date());
         transacionRepository.save(transaction);
+
+        accountFrom.setBalance(accountFrom.getBalance() - cashMessage.getValue());
+        accountTo.setBalance(accountTo.getBalance() + cashMessage.getValue());
+        accountRepository.save(accountFrom);
+        accountRepository.save(accountTo);
         return transaction;
     }
 
     @PostMapping(value = "fees")
     public Transaction postFees(@RequestBody CashMessage cashMessage){
-        Optional<User> userFrom = userRepository.findById(cashMessage.getId());
-        checkIfExisits(userFrom, "User From not found");
-        Optional<User> userTo = userRepository.findById(BANK_ID);
-        checkBankUser(userTo);
+        Optional<Account> accountFromOptional = accountRepository.findById(cashMessage.getId());
+        Account accountFrom = checkIfExists(accountFromOptional);
+        Optional<Account> accountToOptional = accountRepository.findById(BANK_ID);
+        Account accountTo = checkIfExists(accountToOptional);
 
         Transaction transaction = new Transaction();
         transaction.setToAccountId(cashMessage.getId());
@@ -102,6 +116,11 @@ public class TransactionController {
         transaction.setType(FEES);
         transaction.setDate(new Date());
         transacionRepository.save(transaction);
+
+        accountFrom.setBalance(accountFrom.getBalance() - cashMessage.getValue());
+        accountTo.setBalance(accountTo.getBalance() + cashMessage.getValue());
+        accountRepository.save(accountFrom);
+        accountRepository.save(accountTo);
         return transaction;
     }
 
@@ -118,19 +137,10 @@ public class TransactionController {
         return "Customer deleted: " + transaction.getId();
     }
 
-    private void checkIfExisits(Optional<User> userFrom, String s) {
+    private Account checkIfExists(Optional<Account> userFrom) {
         if (userFrom.isEmpty()) {
-            throw new HttpClientErrorException(BAD_REQUEST, s);
+            throw new HttpClientErrorException(BAD_REQUEST, "Account not found");
         }
-    }
-
-    private void checkBankUser(Optional<User> userBank) {
-        if (userBank.isEmpty()) {
-            throw new HttpClientErrorException(BAD_REQUEST, "Contact your administrator");
-        } else {
-            if (!BANK.equals(userBank.get().getName())) {
-                throw new HttpClientErrorException(INTERNAL_SERVER_ERROR, "Contact your administrator");
-            }
-        }
+        return userFrom.get();
     }
 }
