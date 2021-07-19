@@ -7,7 +7,7 @@ This application exposes APIs for handling `Transactions` between `Accounts` for
 ## Guidelines
 
 This application does not start automatically the database, it is needed to do it externally.
-Database will be used by default in localhost:3306 (database 'main'), you can change this in [application.properties](src/main/resources/application.properties).
+Database uses [MariaDB](https://downloads.mariadb.org/mariadb/10.6.3/) by default in localhost:3306 (database 'main'), you can change this in [application.properties](src/main/resources/application.properties).
 
 1. Clone this project
 2. Execute Maven Wrapper
