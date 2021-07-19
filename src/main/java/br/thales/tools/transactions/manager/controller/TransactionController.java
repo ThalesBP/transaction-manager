@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Date;
 import java.util.Optional;
 
@@ -102,6 +103,19 @@ public class TransactionController {
         transaction.setDate(new Date());
         transacionRepository.save(transaction);
         return transaction;
+    }
+
+    @PostMapping(value = "rollBack")
+    public String rollBack(@RequestBody Long id){
+        Transaction transaction;
+        try {
+            transaction = transacionRepository.getById(id);
+        } catch (EntityNotFoundException ene) {
+            System.out.println(ene.getMessage());
+            throw new HttpClientErrorException(BAD_REQUEST, "Transaction does not exist");
+        }
+        transacionRepository.deleteById(id);
+        return "Customer deleted: " + transaction.getId();
     }
 
     private void checkIfExisits(Optional<User> userFrom, String s) {

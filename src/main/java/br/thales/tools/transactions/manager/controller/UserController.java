@@ -1,6 +1,8 @@
 package br.thales.tools.transactions.manager.controller;
 
+import br.thales.tools.transactions.manager.database.AccountRepository;
 import br.thales.tools.transactions.manager.database.UserRepository;
+import br.thales.tools.transactions.manager.model.Account;
 import br.thales.tools.transactions.manager.model.Customer;
 import br.thales.tools.transactions.manager.model.User;
 import br.thales.tools.transactions.manager.model.User.Type;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -22,13 +25,13 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
-    @GetMapping(value = "getAllUser")
+    @GetMapping(value = "listAll")
     public List<User> listAll(){
         return userRepository.findAll();
     }
 
-    @PostMapping(value = "getUser")
-    public User getUser(@RequestBody Long id){
+    @PostMapping(value = "getById")
+    public User getById(@RequestBody Long id){
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             return user.get();
