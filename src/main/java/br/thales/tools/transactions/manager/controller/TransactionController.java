@@ -33,12 +33,13 @@ public class TransactionController {
         Optional<Account> accountToOptional = accountRepository.findById(transferMessage.getToId());
         Account accountTo = checkIfExists(accountToOptional);
 
-        Transaction transaction = new Transaction();
-        transaction.setFromAccountId(transferMessage.getFromId());
-        transaction.setToAccountId(transferMessage.getToId());
-        transaction.setValue(transferMessage.getValue());
-        transaction.setType(TRANSFER);
-        transaction.setDate(new Date());
+        Transaction transaction = Transaction.builder()
+                .fromAccountId(transferMessage.getFromId())
+                .toAccountId(transferMessage.getToId())
+                .value(transferMessage.getValue())
+                .type(TRANSFER)
+                .date(new Date())
+                .build();
         transacionRepository.save(transaction);
 
         accountFrom.setBalance(accountFrom.getBalance() - transferMessage.getValue());
@@ -53,11 +54,12 @@ public class TransactionController {
         Optional<Account> accountFromOptional = accountRepository.findById(cashMessage.getId());
         Account accountFrom = checkIfExists(accountFromOptional);
 
-        Transaction transaction = new Transaction();
-        transaction.setFromAccountId(cashMessage.getId());
-        transaction.setValue(cashMessage.getValue());
-        transaction.setType(DRAW);
-        transaction.setDate(new Date());
+        Transaction transaction = Transaction.builder()
+                .fromAccountId(cashMessage.getId())
+                .value(cashMessage.getValue())
+                .type(DRAW)
+                .date(new Date())
+                .build();
         transacionRepository.save(transaction);
 
         accountFrom.setBalance(accountFrom.getBalance() - cashMessage.getValue());
@@ -70,11 +72,12 @@ public class TransactionController {
         Optional<Account> accountToOptional = accountRepository.findById(cashMessage.getId());
         Account accountTo = checkIfExists(accountToOptional);
 
-        Transaction transaction = new Transaction();
-        transaction.setToAccountId(cashMessage.getId());
-        transaction.setValue(cashMessage.getValue());
-        transaction.setType(DEPOSIT);
-        transaction.setDate(new Date());
+        Transaction transaction = Transaction.builder()
+                .toAccountId(cashMessage.getId())
+                .value(cashMessage.getValue())
+                .type(DEPOSIT)
+                .date(new Date())
+                .build();
         transacionRepository.save(transaction);
 
         accountTo.setBalance(accountTo.getBalance() + cashMessage.getValue());
@@ -89,11 +92,13 @@ public class TransactionController {
         Optional<Account> accountToOptional = accountRepository.findById(cashMessage.getId());
         Account accountTo = checkIfExists(accountToOptional);
 
-        Transaction transaction = new Transaction();
-        transaction.setFromAccountId(cashMessage.getId());
-        transaction.setValue(cashMessage.getValue());
-        transaction.setType(INCOME);
-        transaction.setDate(new Date());
+        Transaction transaction = Transaction.builder()
+                .fromAccountId(BANK_ID)
+                .toAccountId(cashMessage.getId())
+                .value(cashMessage.getValue())
+                .type(INCOME)
+                .date(new Date())
+                .build();
         transacionRepository.save(transaction);
 
         accountFrom.setBalance(accountFrom.getBalance() - cashMessage.getValue());
@@ -110,11 +115,13 @@ public class TransactionController {
         Optional<Account> accountToOptional = accountRepository.findById(BANK_ID);
         Account accountTo = checkIfExists(accountToOptional);
 
-        Transaction transaction = new Transaction();
-        transaction.setToAccountId(cashMessage.getId());
-        transaction.setValue(cashMessage.getValue());
-        transaction.setType(FEES);
-        transaction.setDate(new Date());
+        Transaction transaction = Transaction.builder()
+                .fromAccountId(cashMessage.getId())
+                .toAccountId(BANK_ID)
+                .value(cashMessage.getValue())
+                .type(FEES)
+                .date(new Date())
+                .build();
         transacionRepository.save(transaction);
 
         accountFrom.setBalance(accountFrom.getBalance() - cashMessage.getValue());

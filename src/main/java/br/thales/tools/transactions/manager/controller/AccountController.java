@@ -48,11 +48,12 @@ public class AccountController {
         if(user.isEmpty()) {
             throw new HttpClientErrorException(BAD_REQUEST, "User not found");
         }
-        Account account = new Account();
-        account.setUserId(userId);
-        account.setStatus(ACTIVE);
-        account.setType(CHECKING);
-        account.setDate(new Date());
+        Account account = Account.builder()
+                .userId(userId)
+                .status(ACTIVE)
+                .type(CHECKING)
+                .date(new Date())
+                .build();
         accountRepository.save(account);
         return "Account ID: " + account.getId() + " for user " + user.get().getName();
     }
@@ -63,11 +64,12 @@ public class AccountController {
         if(user.isEmpty()) {
             throw new HttpClientErrorException(BAD_REQUEST, "User not found");
         }
-        Account account = new Account();
-        account.setUserId(userId);
-        account.setStatus(ACTIVE);
-        account.setType(SAVING);
-        account.setDate(new Date());
+        Account account = Account.builder()
+                .userId(userId)
+                .status(ACTIVE)
+                .type(SAVING)
+                .date(new Date())
+                .build();
         accountRepository.save(account);
         return "Account ID: " + account.getId() + " for user " + user.get().getName();
     }

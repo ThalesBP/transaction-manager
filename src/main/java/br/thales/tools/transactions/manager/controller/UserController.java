@@ -45,23 +45,24 @@ public class UserController {
         if(Customer.validateName(name)) {
             throw new HttpClientErrorException(BAD_REQUEST, "It must have at least name and sure name");
         }
-        User user = new User();
-        user.setName(name);
-        user.setType(Type.CUSTOMER);
-        user.setStatus(Status.ACTIVE);
-        user.setDate(new Date());
+        User user = User.builder()
+                .name(name)
+                .type(Type.CUSTOMER)
+                .status(Status.ACTIVE)
+                .date(new Date())
+                .build();
         userRepository.save(user);
         return "New customer registered: " + user.getName() + " with ID: " + user.getId();
     }
 
     @PostMapping(value = "addBusiness")
     public String addBusiness(@RequestBody String name){
-        User user = new User();
-        user.setName(name);
-        user.setType(Type.BUSINESS);
-        user.setStatus(Status.ACTIVE);
-        user.setDate(new Date());
-        userRepository.save(user);
+        User user = User.builder()
+                .name(name)
+                .type(Type.BUSINESS)
+                .status(Status.ACTIVE)
+                .date(new Date())
+                .build();
         return "New customer registered: " + user.getName() + " with ID: " + user.getId();
     }
 }
