@@ -66,6 +66,6 @@ public class Customer extends User {
 
     public static boolean validateName(@RequestParam String name) {
         String[] fullName = name.split(SPACE);
-        return fullName.length < 2;
+        return fullName.length > 1;
     }
 }

@@ -1,21 +1,17 @@
 package br.thales.tools.transactions.manager.controller;
 
 
-import br.thales.tools.transactions.manager.database.AccountRepository;
-import br.thales.tools.transactions.manager.database.UserRepository;
+import br.thales.tools.transactions.manager.error.ServiceException;
 import br.thales.tools.transactions.manager.model.Account;
-import br.thales.tools.transactions.manager.model.User;
+import br.thales.tools.transactions.manager.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static br.thales.tools.transactions.manager.model.Account.Type.CHECKING;
 import static br.thales.tools.transactions.manager.model.Account.Type.SAVING;
-import static br.thales.tools.transactions.manager.utils.Constants.Status.ACTIVE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @RestController
@@ -23,54 +19,44 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 public class AccountController {
 
     @Autowired
-    AccountRepository accountRepository;
-    @Autowired
-    UserRepository userRepository;
+    AccountService accountService;
 
     @GetMapping(value = "getAllAccounts")
     public List<Account> listAll(){
-        return accountRepository.findAll();
+        return accountService.listAll();
     }
 
     @PostMapping(value = "getAccount")
     public Account getAccount(@RequestBody Long id){
-        Optional<Account> account = accountRepository.findById(id);
-        if (account.isPresent()) {
-            return account.get();
-        } else {
-            throw new HttpClientErrorException(BAD_REQUEST, "Account not found");
+        try {
+            return accountService.getById(id);
+        }
+        catch (ServiceException e) {
+            throw new HttpClientErrorException(BAD_REQUEST, e.getMessage());
         }
     }
 
     @PostMapping(value = "addCheckingAccount")
     public String addCheckingAccount(@RequestBody Long userId){
-        Optional<User> user = userRepository.findById(userId);
-        if(user.isEmpty()) {
-            throw new HttpClientErrorException(BAD_REQUEST, "User not found");
+        Account account;
+        try {
+            account = accountService.add(userId, CHECKING);
         }
-        Account account = Account.builder()
-                .userId(userId)
-                .status(ACTIVE)
-                .type(CHECKING)
-                .date(new Date())
-                .build();
-        accountRepository.save(account);
-        return "Account ID: " + account.getId() + " for user " + user.get().getName();
+        catch (ServiceException e) {
+            throw new HttpClientErrorException(BAD_REQUEST, e.getMessage());
+        }
+        return "Account ID: " + account.getId() + " for user id " + userId;
     }
 
     @PostMapping(value = "addSavingAccount")
     public String addSavingAccount(@RequestBody Long userId){
-        Optional<User> user = userRepository.findById(userId);
-        if(user.isEmpty()) {
-            throw new HttpClientErrorException(BAD_REQUEST, "User not found");
+        Account account;
+        try {
+            account = accountService.add(userId, SAVING);
         }
-        Account account = Account.builder()
-                .userId(userId)
-                .status(ACTIVE)
-                .type(SAVING)
-                .date(new Date())
-                .build();
-        accountRepository.save(account);
-        return "Account ID: " + account.getId() + " for user " + user.get().getName();
+        catch (ServiceException e) {
+            throw new HttpClientErrorException(BAD_REQUEST, e.getMessage());
+        }
+        return "Account ID: " + account.getId() + " for user id " + userId;
     }
 }
