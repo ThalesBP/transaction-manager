@@ -1,12 +1,15 @@
 package br.thales.tools.transactions.manager.utils;
 
 public class Constants {
-    public class Strings {
+    public static String BANK = "BANK";
+    public static long BANK_ID = 1;
+
+    public static class Strings {
         public static final String EMPTY = "";
         public static final String SPACE = " ";
     }
 
-    public class Paths {
+    public static class Paths {
         public static final String RESOURCE_PATH = "src/main/resources/";
     }
 

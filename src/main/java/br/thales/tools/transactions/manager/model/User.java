@@ -14,8 +14,7 @@ import java.util.Date;
 public class User {
     public enum Type {
         CUSTOMER,
-        BUSINESS,
-        BANK
+        BUSINESS
     }
 
     @Id

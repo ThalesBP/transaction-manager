@@ -49,7 +49,7 @@ public class AccountController {
             throw new HttpClientErrorException(BAD_REQUEST, "User not found");
         }
         Account account = new Account();
-        account.setUserId(user.get().getId());
+        account.setUserId(userId);
         account.setStatus(ACTIVE);
         account.setType(CHECKING);
         account.setDate(new Date());
@@ -64,7 +64,7 @@ public class AccountController {
             throw new HttpClientErrorException(BAD_REQUEST, "User not found");
         }
         Account account = new Account();
-        account.setUserId(user.get().getId());
+        account.setUserId(userId);
         account.setStatus(ACTIVE);
         account.setType(SAVING);
         account.setDate(new Date());

@@ -2,10 +2,7 @@ package br.thales.tools.transactions.manager.model;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Data
@@ -14,15 +11,23 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Transaction {
+    public enum Type {
+        DRAW,
+        DEPOSIT,
+        TRANSFER,
+        INCOME,
+        FEES
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NonNull
-    private Long fromAccountID;
+    private Long fromAccountId;
     @NonNull
-    private Long toAccountID;
+    private Long toAccountId;
     @NonNull
-    private String type; // TODO: Change to enum or class
+    @Enumerated(EnumType.STRING)
+    private Type type;
     //NonNull
     private float value;
     @NonNull
