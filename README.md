@@ -10,7 +10,11 @@ This application does not start automatically the database, it is needed to do i
 Database uses [MariaDB](https://downloads.mariadb.org/mariadb/10.6.3/) by default in localhost:3306 (database 'main'), you can change this in [application.properties](src/main/resources/application.properties).
 
 1. Clone this project
-2. Execute Maven Wrapper
+2. Build Maven Wrapper
+```
+   mvn -N io.takari:maven:wrapper
+```
+3. Execute Maven Wrapper
 ```
 Windows
    mvnw.cmd spring-boot:run
@@ -19,7 +23,7 @@ Windows
 Linux
    ./mvnw spring-boot:run
 ```
-3. Use [Swagger UI](http://localhost:8080/swagger-ui/) to test
+4. Use [Swagger UI](http://localhost:8080/swagger-ui/) to test
 ```
    http://localhost:8080/swagger-ui/
 ```

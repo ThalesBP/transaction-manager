@@ -19,11 +19,11 @@
         <maven.compiler.target>11</maven.compiler.target>
         <jpa.version>2.5.2</jpa.version>
         <lombok.version>1.18.20</lombok.version>
-        <flyway.version>7.11.0</flyway.version>
         <mariadb.version>2.7.3</mariadb.version>
         <springweb.version>2.3.2.RELEASE</springweb.version>
         <swagger.version>3.0.0</swagger.version>
         <junit.version>4.13.2</junit.version>
+        <h2.version>1.4.200</h2.version>
     </properties>
 
     <dependencies>
@@ -41,11 +41,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${springweb.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>${flyway.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
@@ -70,8 +65,13 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
