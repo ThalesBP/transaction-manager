@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  maria_db:
+    container_name: db
+    image: "mariadb:latest"
+    restart: always
+    ports:
+      - "3306:3306"
+    hostname: localhost
+    environment:
+      MYSQL_DATABASE: main
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volume:
+      - transaction_data:/var/lib/sql
+  api_service:
+    container_name: api
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - maria_db
+volumes:
+  transaction_data:
